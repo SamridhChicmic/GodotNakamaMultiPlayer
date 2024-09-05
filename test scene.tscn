@@ -74,6 +74,7 @@ offset_left = 82.0
 offset_top = -1.0
 offset_right = 268.0
 offset_bottom = 31.0
+text = "test@gmail.com"
 
 [node name="passwordEdit" type="LineEdit" parent="Panel2"]
 offset_left = 82.0
@@ -120,11 +121,18 @@ offset_bottom = 542.0
 
 [node name="JoinCreateButton" type="Button" parent="Panel4"]
 layout_mode = 0
-offset_left = 228.0
-offset_top = 165.0
-offset_right = 323.0
-offset_bottom = 196.0
+offset_left = 225.0
+offset_top = 100.0
+offset_right = 320.0
+offset_bottom = 131.0
 text = "Join/Create"
+
+[node name="MatchMaking" type="Button" parent="Panel4"]
+offset_left = 197.0
+offset_top = 157.0
+offset_right = 315.0
+offset_bottom = 188.0
+text = "Match making"
 
 [node name="Match" type="LineEdit" parent="Panel4"]
 layout_mode = 0
@@ -152,4 +160,5 @@ text = "Ping"
 [connection signal="button_down" from="Panel3/StoreData" to="." method="_on_store_data_button_down"]
 [connection signal="button_down" from="Panel3/GetData" to="." method="_on_get_data_button_down"]
 [connection signal="button_down" from="Panel4/JoinCreateButton" to="." method="_on_join_create_button_button_down"]
+[connection signal="button_down" from="Panel4/MatchMaking" to="." method="_on_match_making_button_down"]
 [connection signal="button_down" from="Panel4/Ping" to="." method="_on_ping_button_down"]

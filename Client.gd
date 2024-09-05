@@ -3,6 +3,8 @@ extends Control
 var session:NakamaSession
 var client:NakamaClient
 var socket :NakamaSocket
+var createdMatch
+var multiplayerBridge
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	client=Nakama.create_client("defaultkey",'127.0.0.1',7350,'http')
@@ -28,7 +30,7 @@ func onSocketReceivedMatchPresence(presence:NakamaRTAPI.MatchPresenceEvent):
 	pass
 
 func onSocketReceivedMatchState(state:NakamaRTAPI.MatchData):
-	print("Socket Received Match State",state)
+	print("<====Socket Received Match State===>",state,"<==========Session====>",session)
 	pass
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -50,9 +52,32 @@ func _on_login_button_button_down() -> void:
 	print("=====Test>",account)
 	$Panel/UserAccountText.text=account.user.username
 	$Panel/DisplaynameText.text=account.user.display_name
+	
+	setupMultiPlayerbridge()
 	pass # Replace with function body.
 
+func setupMultiPlayerbridge():
+	multiplayerBridge=NakamaMultiplayerBridge.new(socket)
+	multiplayerBridge.match_joined.connect(onMatchJoin)
+	multiplayerBridge.match_join_error.connect(onMatchJoinError)
+	var multiplayer=get_tree().get_multiplayer()
+	multiplayer.set_multiplayer_peer(multiplayerBridge.multiplayer_peer)
+	multiplayer.peer_connected.connect(onPeerConnected)
+	multiplayer.peer_disconnected.connect(onPeerDisconnected)
+	pass
 
+func onPeerDisconnected(id):
+	print('peer Disconnected id is:',str(id))
+	pass
+func onPeerConnected(id):
+	print('peer connected id is:',str(id))
+func onMatchJoinError(error):
+	print("Unable to Join Match",error.message)
+	pass
+
+func onMatchJoin():
+	print("join match with id",multiplayerBridge.match_id)
+	pass
 func _on_store_data_button_down() -> void:
 	var saveGame={
 		"name":"username",
@@ -92,13 +117,39 @@ func _on_get_data_button_down() -> void:
 
 
 func _on_join_create_button_button_down() -> void:
-	var createdMatch=await socket.create_match_async($Panel4/Match.text) #creatematch automatically join
-	if createdMatch.is_exception():
-		print("Failed to Create match",createdMatch)
-		return
-	print("===========Created match===========",createdMatch.match_id)
+	multiplayerBridge.join_named_match($Panel4/Match.text)
+	#createdMatch=await socket.create_match_async($Panel4/Match.text) #creatematch automatically join
+	#if createdMatch.is_exception():
+		#print("Failed to Create match",createdMatch)
+		#return
+	#print("===========Created match===========",createdMatch.match_id)
 	pass # Replace with function body.
 
 
 func _on_ping_button_down() -> void:
-	pass # Replace with function body.
+	sendData.rpc("hello World")
+	#var data={"hello":"world"}
+	#socket.send_match_state_async(createdMatch.match_id,1,JSON.stringify(data))
+	#pass # Replace with function body.
+
+@rpc("any_peer")
+func sendData(message):
+	print(message)
+
+
+func _on_match_making_button_down() -> void:
+	#var query="+properties.region:US +properties.rank:>4 +properties.rank:<10"
+	var query="+properties.region:US"
+	var stringP={'region':"US"}
+	#var numberP={'rank':6}
+	var ticket=await socket.add_matchmaker_async(query,2,2,stringP)
+	
+	if ticket.is_exception():
+		print("Failed to match")
+		return
+	print("match ticket number ",str(ticket))
+	socket.received_matchmaker_matched.connect(onMatchMakerMatched)
+
+func onMatchMakerMatched(match):
+	var joinedMatch=await socket.join_matched_async(match)
+	createdMatch=joinedMatch
