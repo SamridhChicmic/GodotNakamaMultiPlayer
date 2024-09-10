@@ -759,9 +759,6 @@ tile_set = SubResource("TileSet_sw781")
 format = 2
 layer_0/tile_data = PackedInt32Array(458757, 524288, 3, 458758, 589824, 3, 458759, 655360, 3, 458760, 720896, 3, 458761, 524288, 3, 458762, 589824, 3, 458763, 655360, 3, 458764, 720896, 3, 458765, 524288, 3, 458766, 589824, 3, 458767, 655360, 3, 458768, 720896, 3, 458769, 524288, 3, 458770, 589824, 3, 458771, 655360, 3, 458772, 720896, 3, 458773, 524288, 3, 458774, 589824, 3, 458775, 655360, 3, 458776, 720896, 3)
 
-[node name="Player" parent="." instance=ExtResource("3_h3ngx")]
-visible = false
-
 [node name="SpawnPoint" type="Node2D" parent="." groups=["spawnpoint"]]
 position = Vector2(326, 227)
 
@@ -772,4 +769,4 @@ position = Vector2(740, 286)
 position = Vector2(621, 119)
 
 [node name="SpawnPoint4" type="Node2D" parent="." groups=["spawnpoint"]]
-position = Vector2(505, 411)
+position = Vector2(515, 214)

@@ -8,6 +8,7 @@ func _ready():
 	var index = 0
 	var keys = NakamaMultiplayer.Players.keys()
 	keys.sort()
+	print("Players==>",NakamaMultiplayer.Players)
 	print("KeySorted=====",keys,spawnpoints)
 	for i in keys:
 		var instancedPlayer = playerScene.instantiate()
